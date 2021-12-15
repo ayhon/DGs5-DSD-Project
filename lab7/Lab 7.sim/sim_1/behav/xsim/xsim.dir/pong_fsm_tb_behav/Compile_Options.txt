@@ -1,0 +1,1 @@
+-wto "e04462ccd2e84e33bb74d5532efe4017" --incr --debug "typical" --relax --mt "8" -L "xil_defaultlib" -L "secureip" --snapshot "pong_fsm_tb_behav" "xil_defaultlib.pong_fsm_tb" -log "elaborate.log" 
