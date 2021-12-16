@@ -160,7 +160,8 @@ begin
 
 	CountxDO => YCoordxDN,
 	RecoveryxSO => VRxS,
-	SyncxSO => VSxSN
+	SyncxSO => VSxSN,
+	LoopCompletedxSO => VSYNCxSO -- TODO: This should be active only 1 cycle. Test it holds
   ); -- }}}
 
   update_color_channels: process (all) is -- {{{

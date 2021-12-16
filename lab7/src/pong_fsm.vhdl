@@ -56,6 +56,16 @@ architecture rtl of pong_fsm is
 	signal PlateXxDP, PlateXxDN : unsigned(COORD_BW - 1 downto 0);
 	signal AbovePlatexS : std_logic;
 	signal SumOfVgaCoordinatesxD : std_logic_vector(COORD_BW - 1 downto 0);
+    -- TODO: Use constants as boundaries, instead of having HS_DISPLAY - BALL_WIDTH/2 all over the code
+
+    constant BALL_X_MAX : natural := HS_DISPLAY - BALL_WIDTH/2; -- 1019
+    constant BALL_X_MIN : natural := BALL_WIDTH/2; -- 5
+
+    constant BALL_Y_MAX : natural := VS_DISPLAY - PLATE_HEIGHT - BALL_HEIGHT/2; -- 753
+    constant BALL_Y_MIN : natural := BALL_HEIGHT/2; -- 5
+
+    constant PLATE_X_MAX : natural := HS_DISPLAY - PLATE_WIDTH/2; -- 989
+    constant PLATE_X_MIN : natural := PLATE_WIDTH/2; -- 35
 
 --=============================================================================
 -- ARCHITECTURE BEGIN
@@ -70,7 +80,7 @@ begin
 		BallYxDP <= to_unsigned(VS_DISPLAY/2,COORD_BW);
 	  elsif CLKxCI'event and CLKxCI = '1' then
 	    StatexDP <= StatexDN;
-		BallXxDP <= BallYxDN;
+		BallXxDP <= BallXxDN;
 		BallYxDP <= BallYxDN;
 		PlateXxDP <= PlateXxDN;
 	  end if;
@@ -78,84 +88,79 @@ begin
 
 	next_state: process (all) is -- {{{
 	begin
+        -- Default values {{{2
+        StatexDN <= StatexDP;
+        BallXxDN <= BallXxDP;
+        BallYxDN <= BallYxDP;
+        PlateXxDN <= PlateXxDP;
+        -- }}}2
 		if VSYNCxSI = '1' then
 			-- Check if the ball is above the plate -- {{{2
-			AbovePlatexS <= '1' when PlateXxDP - PLATE_WIDTH/2 < VgaXxDI or VgaXxDI <= PlateXxDP + PLATE_WIDTH/2 else 
+            
+            -- TODO: To not use -, pass to the other side of the equation
+			AbovePlatexS <= '1' when PlateXxDP <= BallXxDP + PLATE_WIDTH/2  and BallXxDP <= PlateXxDP + PLATE_WIDTH/2 else 
 						   '0';
 			-- }}}2
 			-- Calculate plate's next position, depending on the values of the Left and Right signals -- {{{2
-			PlateXxDN <= PlateXxDP;
-			if RightxSI = '1' then
-			  PlateXxDN <= PlateXxDN + PLATE_STEP_X;
-			end if;
-			if LeftxSI = '1' then
-			  PlateXxDN <= PlateXxDN - PLATE_STEP_X;
-			end if; -- }}}2
+            PlateXxDN <= to_unsigned(HS_DISPLAY/2,COORD_BW) when StatexDP = MainScreen or StatexDP = MainScreenLeave else 
+                         PlateXxDP + PLATE_STEP_X           when LeftxSI = '0' and RightxSI = '1' and PlateXxDP <= PLATE_X_MAX else
+                         PlateXxDP - PLATE_STEP_X           when LeftxSI = '1' and RightxSI = '0' and PlateXxDP >= PLATE_X_MIN else
+                         PlateXxDP;
+            -- }}}2
 			-- Calculate the next State and Balls' position depending on state -- {{{2
 			SumOfVgaCoordinatesxD <= std_logic_vector(VgaXxDI + VgaYxDI);
-			BallXxDN <= BallXxDP;
-			BallYxDN <= BallYxDP;
-			StatexDN <= StatexDP;
 			case StatexDP is
 			  when MainScreen => -- {{{3
 				BallXxDN <= to_unsigned(HS_DISPLAY/2,COORD_BW);
 				BallYxDN <= to_unsigned(VS_DISPLAY/2,COORD_BW);
-				PlateXxDN <= to_unsigned(HS_DISPLAY/2,COORD_BW);
+			  
 				StatexDN <= MainScreenLeave when RightxSI = '1' and LeftxSI = '1' else
 							MainScreen;
-			  
 			  -- }}}3
 			  when MainScreenLeave => -- {{{3
-				StatexDN <= UpLeft when RightxSI = '0' and LeftxSI = '0' and SumOfVgaCoordinatesxD(0) = '0' else
-							UpRight when RightxSI = '0' and LeftxSI = '0' and SumOfVgaCoordinatesxD(0) = '1' else
+                StatexDN <= UpRight when RightxSI = '0' and LeftxSI = '0' and SumOfVgaCoordinatesxD(0) = '0' else
+							UpLeft  when RightxSI = '0' and LeftxSI = '0' and SumOfVgaCoordinatesxD(0) = '1' else
 							MainScreenLeave;
 			  -- }}}3
 			  when UpLeft => -- {{{3
-				BallXxDN <= BallXxDP-BALL_STEP_X;
-				BallYxDN <= BallYxDP+BALL_STEP_Y;
+				BallXxDN <= BallXxDP - BALL_STEP_X;
+				BallYxDN <= BallYxDP - BALL_STEP_Y;
 
-				StatexDN <= DownRight when BallXxDN <= BALL_WIDTH/2 and BallYxDN <= BALL_HEIGHT/2 else
-							UpRight when BallXxDN <= BALL_WIDTH/2 else
-							DownLeft when BallYxDN <= BALL_HEIGHT/2 else
+				StatexDN <= DownRight when BallXxDN <= BALL_X_MIN and BallYxDN <= BALL_Y_MIN else
+							UpRight when BallXxDN <= BALL_X_MIN else
+							DownLeft when BallYxDN <= BALL_Y_MIN else
 							UpLeft;
 			  -- }}}3
 			  when UpRight => -- {{{3
-				BallXxDN <= BallXxDP+BALL_STEP_X;
-				BallYxDN <= BallYxDP+BALL_STEP_Y;
+				BallXxDN <= BallXxDP + BALL_STEP_X;
+				BallYxDN <= BallYxDP - BALL_STEP_Y;
 
-				StatexDN <= DownLeft when BallXxDN >= HS_DISPLAY - BALL_WIDTH/2 and BallYxDN <= BALL_HEIGHT/2 else
-							UpLeft when BallXxDN >= HS_DISPLAY - BALL_WIDTH/2 else
-							DownRight when BallYxDN <= BALL_HEIGHT/2 else
+				StatexDN <= DownLeft when BallXxDN >= BALL_X_MAX and BallYxDN <= BALL_Y_MIN else
+							UpLeft when BallXxDN >= BALL_X_MAX else
+							DownRight when BallYxDN <= BALL_Y_MIN else
 							UpRight;
 			  -- }}}3
 			  when DownLeft => -- {{{3
-				BallXxDN <= BallXxDP-BALL_STEP_X;
-				BallYxDN <= BallYxDP+BALL_STEP_Y;
+				BallXxDN <= BallXxDP - BALL_STEP_X;
+				BallYxDN <= BallYxDP + BALL_STEP_Y;
 
-				StatexDN <= UpRight when AbovePlatexS = '1' and BallXxDN <= BALL_WIDTH/2 and BallYxDN >= VS_DISPLAY - PLATE_HEIGHT - BALL_HEIGHT/2 else
-							UpLeft when AbovePlatexS = '1' and BallYxDN >= VS_DISPLAY - PLATE_HEIGHT - BALL_HEIGHT/2 else
-							DownRight when BallXxDN <= BALL_WIDTH/2 else
-							MainScreen when AbovePlatexS = '0' and BallYxDN <= VS_DISPLAY - PLATE_HEIGHT - BALL_HEIGHT/2 else
+				StatexDN <= MainScreen when AbovePlatexS = '0' and BallYxDN >= BALL_Y_MAX else
+                            UpRight    when AbovePlatexS = '1' and BallYxDN >= BALL_Y_MAX and BallXxDN <= BALL_X_MIN else
+							UpLeft     when AbovePlatexS = '1' and BallYxDN >= BALL_Y_MAX else
+							DownRight  when BallXxDN <= BALL_X_MIN else
 							DownLeft;
 			  -- }}}3
 			  when DownRight => -- {{{3
-				BallXxDN <= BallXxDP+BALL_STEP_X;
-				BallYxDN <= BallYxDP-BALL_STEP_Y;
+				BallXxDN <= BallXxDP + BALL_STEP_X;
+				BallYxDN <= BallYxDP + BALL_STEP_Y;
 
-				StatexDN <= UpLeft when AbovePlatexS = '1' and BallXxDN >= HS_DISPLAY - BALL_WIDTH/2 and BallYxDN >= VS_DISPLAY - PLATE_HEIGHT - BALL_HEIGHT/2 else
-							UpRight when AbovePlatexS = '1' and BallYxDN >= VS_DISPLAY - PLATE_HEIGHT - BALL_HEIGHT/2 else
-							DownLeft when BallXxDN >= HS_DISPLAY - BALL_WIDTH/2 else
-							MainScreen when AbovePlatexS = '0' and BallYxDN = VS_DISPLAY - PLATE_HEIGHT else
+				StatexDN <= MainScreen when AbovePlatexS = '0' and BallYxDN >= BALL_Y_MAX else
+                            UpLeft     when AbovePlatexS = '1' and BallYxDN >= BALL_Y_MAX and BallXxDN >= BALL_X_MAX else 
+							UpRight    when AbovePlatexS = '1' and BallYxDN >= BALL_Y_MAX else
+							DownLeft   when BallXxDN >= BALL_X_MAX else
 							DownRight;
 			  -- }}}3
 			end case; -- }}}2
-		else
-			-- Defaults to keep last value {{{2
-			StatexDN <= StatexDP;
-			BallXxDN <= BallXxDP;
-			BallYxDN <= BallYxDP;
-			PlateXxDN <= PlateXxDP;
-			-- }}}2
 		end if;
 	end process; -- }}}
 

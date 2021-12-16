@@ -26,7 +26,7 @@ entity vga_controller_updater is -- {{{
   
 	SyncxSO : out std_logic;
 	RecoveryxSO : out std_logic;
-    LoopCompletedxSO : out std_logic;
+    LoopCompletedxSO : out std_logic; -- TODO: Independent from enable
 	CountxDO : out unsigned(BW-1 downto 0)
   );
 end vga_controller_updater; -- }}}
@@ -43,9 +43,9 @@ begin
   begin
     LoopCompletedxS <= '1' when CountxDI + 1 = TOP + FRONT_PORCH + PULSE + BACK_PORCH else
                        '0';
-    CountxD <= CountxDI when EnablexSI = '0' else
-               CountxDI + 1 when LoopCompletedxS = '0' else
-               (others => '0');
+	CountxD <= (others => '0') when LoopCompletedxS = '1' else
+			   CountxDI + 1 when EnablexSI = '1' else
+               CountxDI;
     RecoveryxS <= '1' when CountxD >= TOP else 
                    '0';
     SyncxS <= not POLARITY when CountxD < TOP + FRONT_PORCH or CountxD >= TOP + FRONT_PORCH + PULSE else

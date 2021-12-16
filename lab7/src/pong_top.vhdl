@@ -244,13 +244,49 @@ begin
 
   -- Port B
   ENBxS     <= '1';
-  RdAddrBxD <= std_logic_vector(YCoordxD(10-1 downto 2)) & std_logic_vector(XCoordxD(10-1 downto 2)); -- TODO: Map the X and Y coordinates to the address of the memory
+  RdAddrBxD <= std_logic_vector(YCoordxD(10-1 downto 2)) & std_logic_vector(XCoordxD(10-1 downto 2));
 
   BGRedxS   <= DOUTBxD(3 * COLOR_BW - 1 downto 2 * COLOR_BW);
   BGGreenxS <= DOUTBxD(2 * COLOR_BW - 1 downto 1 * COLOR_BW);
   BGBluexS  <= DOUTBxD(1 * COLOR_BW - 1 downto 0 * COLOR_BW);
 
+  drawing_manger: process (all) is -- {{{1
+  begin
+    -- Default to drawing background {{{2
+	RedxS <= BGRedxS;
+	GreenxS <= BGGreenxS;
+	BluexS <= BGBluexS;
+	-- }}}2
+	-- Draw ball if it follows {{{2
+	if BallXxD - BALL_WIDTH/2 <= XCoordxD and XCoordxD <= BallXxD + BALL_WIDTH/2 and BallYxD - BALL_HEIGHT/2 <= YCoordxD and YCoordxD <= BallYxD + BALL_HEIGHT/2 then
+		RedxS <= (others => '1');
+		GreenxS <= (others => '0');
+		BluexS <= (others => '0');
+	end if;
+	-- }}}2
+	-- Draw plate if it proceeds {{{2
+    -- TODO: To not use -, pass to the other side of the equation
+	if PlateXxD <= XCoordxD + PLATE_WIDTH/2  and XCoordxD <= PlateXxD + PLATE_WIDTH/2 and YCoordxD >= VS_DISPLAY - PLATE_HEIGHT then
+	  RedxS <= (others => '1');
+	  GreenxS <= (others => '1');
+	  BluexS <= (others => '1');
+	end if;
+	-- }}}2
+	-- Draw bounding boxes {{{2
+	if XCoordxD = 0 or
+	XCoordxD = HS_DISPLAY or
+	YCoordxD = VS_DISPLAY or
+	YCoordxD = 0 then
+	  RedxS <= (others => '1');
+	  GreenxS <= (others => '1');
+	  BluexS <= (others => '0');
+	end if;
+
+	-- }}}2
+  end process; -- }}}1
+
 end rtl;
 --=============================================================================
 -- ARCHITECTURE END
 --=============================================================================
+-- vim: set fdm=marker sw=2 et: --
