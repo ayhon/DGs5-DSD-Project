@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2020.2 (lin64) Build 3064766 Wed Nov 18 09:12:47 MST 2020
-| Date             : Wed Dec 15 09:21:57 2021
+| Date             : Thu Dec 16 16:47:22 2021
 | Host             : slab running 64-bit Fedora release 35 (Thirty Five)
 | Command          : report_power -file vga_controller_top_power_routed.rpt -pb vga_controller_top_power_summary_routed.pb -rpx vga_controller_top_power_routed.rpx
 | Design           : vga_controller_top
@@ -53,12 +53,12 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |    <0.001 |        8 |       --- |             --- |
-| Slice Logic    |    <0.001 |       98 |       --- |             --- |
-|   LUT as Logic |    <0.001 |       39 |     53200 |            0.07 |
-|   CARRY4       |    <0.001 |        9 |     13300 |            0.07 |
+| Slice Logic    |    <0.001 |      126 |       --- |             --- |
+|   LUT as Logic |    <0.001 |       63 |     53200 |            0.12 |
+|   CARRY4       |    <0.001 |       12 |     13300 |            0.09 |
 |   Register     |    <0.001 |       38 |    106400 |            0.04 |
-|   Others       |     0.000 |        5 |       --- |             --- |
-| Signals        |    <0.001 |       96 |       --- |             --- |
+|   Others       |     0.000 |        6 |       --- |             --- |
+| Signals        |    <0.001 |      109 |       --- |             --- |
 | MMCM           |     0.122 |        1 |         4 |           25.00 |
 | I/O            |     0.002 |       16 |       125 |           12.80 |
 | Static Power   |     0.108 |          |           |                 |

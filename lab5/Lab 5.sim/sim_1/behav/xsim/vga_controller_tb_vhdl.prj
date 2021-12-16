@@ -1,8 +1,12 @@
 # compile vhdl design source files
 vhdl xil_defaultlib  \
 "../../../../src/dsd_prj_pkg.vhdl" \
+
+vhdl2008 xil_defaultlib  \
 "../../../../src/vga_controller.vhdl" \
 "../../../../src/vga_controller_updater.vhdl" \
+
+vhdl xil_defaultlib  \
 "../../../../src/vga_controller_tb.vhdl" \
 
 # Do not sort compile order

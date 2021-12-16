@@ -3,3 +3,7 @@
 Nov 18 2020
 09:20:35
 /home/ayhon/Vivado/VGAProject/lab5/Lab 5.sim/sim_1/behav/xsim/glbl.v,1605673889,verilog,,,,glbl,,,,,,,,
+/home/ayhon/Vivado/VGAProject/lab5/src/dsd_prj_pkg.vhdl,1638352157,vhdl,/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller.vhdl;/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller_tb.vhdl,,,dsd_prj_pkg,,,,,,,,
+/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller.vhdl,1638781999,vhdl2008,,,,vga_controller,,,,,,,,
+/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller_tb.vhdl,1638722410,vhdl,,,,vga_controller_tb,,,,,,,,
+/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller_updater.vhdl,1638778256,vhdl2008,,,,vga_controller_updater,,,,,,,,

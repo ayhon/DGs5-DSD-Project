@@ -1,8 +1,7 @@
-INFO: [VRFC 10-2263] Analyzing Verilog file "/home/ayhon/Vivado/VGAProject/lab5/Lab 5.sim/sim_1/behav/xsim/glbl.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module glbl
 INFO: [VRFC 10-163] Analyzing VHDL file "/home/ayhon/Vivado/VGAProject/lab5/src/dsd_prj_pkg.vhdl" into library xil_defaultlib
 INFO: [VRFC 10-163] Analyzing VHDL file "/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller.vhdl" into library xil_defaultlib
 INFO: [VRFC 10-3107] analyzing entity 'vga_controller'
-ERROR: [VRFC 10-1449] this construct is only supported in VHDL 1076-2008 [/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller.vhdl:164]
-ERROR: [VRFC 10-3782] unit 'rtl' ignored due to previous errors [/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller.vhdl:52]
-INFO: [VRFC 10-3070] VHDL file '/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller.vhdl' ignored due to errors
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller_updater.vhdl" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'vga_controller_updater'
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/ayhon/Vivado/VGAProject/lab5/src/vga_controller_tb.vhdl" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'vga_controller_tb'

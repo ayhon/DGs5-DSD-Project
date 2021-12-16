@@ -57,6 +57,8 @@ architecture rtl of vga_controller_top is
   signal XCoordxD : unsigned(COORD_BW - 1 downto 0);
   signal YCoordxD : unsigned(COORD_BW - 1 downto 0);
 
+  signal SumCoordxD : std_logic_vector(COORD_BW -1 downto 0);
+
 --=============================================================================
 -- COMPONENT DECLARATIONS
 --=============================================================================
@@ -94,6 +96,7 @@ architecture rtl of vga_controller_top is
       BluexSO  : out std_logic_vector(COLOR_BW - 1 downto 0)
     );
   end component vga_controller;
+
 
 --=============================================================================
 -- ARCHITECTURE BEGIN
@@ -135,10 +138,17 @@ begin
 -- COLOR LOGIC
 --=============================================================================
 
-  -- All white
-  RedxSI   <= "1111";
-  GreenxSI <= "1111";
-  BluexSI  <= "1111";
+	compute_colors: process (all) is
+	begin
+		SumCoordxD <= std_logic_vector(XCoordxD + YCoordxD);
+		RedxSI   <= SumCoordxD(3*COLOR_BW -1 downto 2*COLOR_BW);
+		GreenxSI <= SumCoordxD(2*COLOR_BW -1 downto 1*COLOR_BW);
+		BluexSI  <= SumCoordxD(  COLOR_BW -1 downto 0);
+	end process;
+  /* -- All white */
+  /* RedxSI   <= "1111"; */
+  /* GreenxSI <= "1111"; */
+  /* BluexSI  <= "1111"; */
 
 end rtl;
 --=============================================================================
