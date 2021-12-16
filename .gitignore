@@ -1,7 +1,4 @@
-lab*/*runs/**
-lab*/*cache/**
-lab*/*gen/**
-lab*/*hw/**
-lab*/*sim/**
-lab*/*srcs/**
-lab*/*ip_user_files/**
+lab*/**
+!lab*/constr
+!lab*/pynq
+!lab*/src
